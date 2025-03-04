@@ -212,13 +212,12 @@ graph
         fh.seek(0)
         pytest.raises(nx.NetworkXError, nx.read_gml, fh, label="label")
 
-    @pytest.mark.parametrize("stringizer", (None, literal_stringizer))
-    def test_tuplelabels(self, stringizer):
+    def test_tuplelabels(self):
         # https://github.com/networkx/networkx/pull/1048
         # Writing tuple labels to GML failed.
         G = nx.Graph()
         G.add_edge((0, 1), (1, 0))
-        data = "\n".join(nx.generate_gml(G, stringizer=stringizer))
+        data = "\n".join(nx.generate_gml(G, stringizer=literal_stringizer))
         answer = """graph [
   node [
     id 0
@@ -554,8 +553,8 @@ graph
             "directed 1 multigraph 1 ]"
         )
         assert_parse_error(
-            "graph [edge [ source '\u4200' target '\u4200' ] "
-            + "node [ id '\u4200' label b ] ]"
+            "graph [edge [ source u'u\4200' target u'u\4200' ] "
+            + "node [ id u'u\4200' label b ] ]"
         )
 
         def assert_generate_error(*args, **kwargs):

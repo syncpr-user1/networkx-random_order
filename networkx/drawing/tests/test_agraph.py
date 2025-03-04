@@ -1,7 +1,6 @@
 """Unit tests for PyGraphviz interface."""
 import os
 import tempfile
-import warnings
 
 import pytest
 
@@ -250,6 +249,6 @@ class TestAGraph:
         G.add_node(0, pos=(0, 0))
         G.add_node(1, pos=(1, 1))
         A = nx.nx_agraph.to_agraph(G)
-        with warnings.catch_warnings(record=True) as record:
+        with pytest.warns(None) as record:
             A.layout()
         assert len(record) == 0

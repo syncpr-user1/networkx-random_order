@@ -178,11 +178,6 @@ def kosaraju_strongly_connected_components(G, source=None):
 def strongly_connected_components_recursive(G):
     """Generate nodes in strongly connected components of graph.
 
-    .. deprecated:: 3.2
-
-       This function is deprecated and will be removed in a future version of
-       NetworkX. Use `strongly_connected_components` instead.
-
     Recursive version of algorithm.
 
     Parameters
@@ -241,18 +236,35 @@ def strongly_connected_components_recursive(G):
        Information Processing Letters 49(1): 9-14, (1994)..
 
     """
-    import warnings
 
-    warnings.warn(
-        (
-            "\n\nstrongly_connected_components_recursive is deprecated and will be\n"
-            "removed in the future. Use strongly_connected_components instead."
-        ),
-        category=DeprecationWarning,
-        stacklevel=2,
-    )
+    def visit(v, cnt):
+        root[v] = cnt
+        visited[v] = cnt
+        cnt += 1
+        stack.append(v)
+        for w in G[v]:
+            if w not in visited:
+                yield from visit(w, cnt)
+            if w not in component:
+                root[v] = min(root[v], root[w])
+        if root[v] == visited[v]:
+            component[v] = root[v]
+            tmpc = {v}  # hold nodes in this component
+            while stack[-1] != v:
+                w = stack.pop()
+                component[w] = root[v]
+                tmpc.add(w)
+            stack.remove(v)
+            yield tmpc
 
-    yield from strongly_connected_components(G)
+    visited = {}
+    component = {}
+    root = {}
+    cnt = 0
+    stack = []
+    for source in G:
+        if source not in visited:
+            yield from visit(source, cnt)
 
 
 @not_implemented_for("undirected")

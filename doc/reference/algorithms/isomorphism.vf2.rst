@@ -17,10 +17,8 @@ Graph Matcher
     GraphMatcher.initialize
     GraphMatcher.is_isomorphic
     GraphMatcher.subgraph_is_isomorphic
-    GraphMatcher.subgraph_is_monomorphic
     GraphMatcher.isomorphisms_iter
     GraphMatcher.subgraph_isomorphisms_iter
-    GraphMatcher.subgraph_monomorphisms_iter
     GraphMatcher.candidate_pairs_iter
     GraphMatcher.match
     GraphMatcher.semantic_feasibility
@@ -38,10 +36,8 @@ DiGraph Matcher
     DiGraphMatcher.initialize
     DiGraphMatcher.is_isomorphic
     DiGraphMatcher.subgraph_is_isomorphic
-    DiGraphMatcher.subgraph_is_monomorphic
     DiGraphMatcher.isomorphisms_iter
     DiGraphMatcher.subgraph_isomorphisms_iter
-    DiGraphMatcher.subgraph_monomorphisms_iter
     DiGraphMatcher.candidate_pairs_iter
     DiGraphMatcher.match
     DiGraphMatcher.semantic_feasibility

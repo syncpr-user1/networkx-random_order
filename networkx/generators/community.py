@@ -19,7 +19,6 @@ __all__ = [
 ]
 
 
-@nx._dispatch(graphs=None)
 def caveman_graph(l, k):
     """Returns a caveman graph of `l` cliques of size `k`.
 
@@ -66,7 +65,6 @@ def caveman_graph(l, k):
     return G
 
 
-@nx._dispatch(graphs=None)
 def connected_caveman_graph(l, k):
     """Returns a connected caveman graph of `l` cliques of size `k`.
 
@@ -110,7 +108,7 @@ def connected_caveman_graph(l, k):
     """
     if k < 2:
         raise nx.NetworkXError(
-            "The size of cliques in a connected caveman graph must be at least 2."
+            "The size of cliques in a connected caveman graph " "must be at least 2."
         )
 
     G = nx.caveman_graph(l, k)
@@ -121,7 +119,6 @@ def connected_caveman_graph(l, k):
 
 
 @py_random_state(3)
-@nx._dispatch(graphs=None)
 def relaxed_caveman_graph(l, k, p, seed=None):
     """Returns a relaxed caveman graph.
 
@@ -173,7 +170,6 @@ def relaxed_caveman_graph(l, k, p, seed=None):
 
 
 @py_random_state(3)
-@nx._dispatch(graphs=None)
 def random_partition_graph(sizes, p_in, p_out, seed=None, directed=False):
     """Returns the random partition graph with a partition of sizes.
 
@@ -252,7 +248,6 @@ def random_partition_graph(sizes, p_in, p_out, seed=None, directed=False):
 
 
 @py_random_state(4)
-@nx._dispatch(graphs=None)
 def planted_partition_graph(l, k, p_in, p_out, seed=None, directed=False):
     """Returns the planted l-partition graph.
 
@@ -285,7 +280,7 @@ def planted_partition_graph(l, k, p_in, p_out, seed=None, directed=False):
     Raises
     ------
     NetworkXError
-      If `p_in`, `p_out` are not in `[0, 1]`
+      If p_in,p_out are not in [0,1] or
 
     Examples
     --------
@@ -308,7 +303,6 @@ def planted_partition_graph(l, k, p_in, p_out, seed=None, directed=False):
 
 
 @py_random_state(6)
-@nx._dispatch(graphs=None)
 def gaussian_random_partition_graph(n, s, v, p_in, p_out, directed=False, seed=None):
     """Generate a Gaussian random partition graph.
 
@@ -384,7 +378,6 @@ def gaussian_random_partition_graph(n, s, v, p_in, p_out, directed=False, seed=N
     return random_partition_graph(sizes, p_in, p_out, seed=seed, directed=directed)
 
 
-@nx._dispatch(graphs=None)
 def ring_of_cliques(num_cliques, clique_size):
     """Defines a "ring of cliques" graph.
 
@@ -424,7 +417,7 @@ def ring_of_cliques(num_cliques, clique_size):
     simply adds the link without removing any link from the cliques.
     """
     if num_cliques < 2:
-        raise nx.NetworkXError("A ring of cliques must have at least two cliques")
+        raise nx.NetworkXError("A ring of cliques must have at least " "two cliques")
     if clique_size < 2:
         raise nx.NetworkXError("The cliques must have at least two nodes")
 
@@ -440,7 +433,6 @@ def ring_of_cliques(num_cliques, clique_size):
     return G
 
 
-@nx._dispatch(graphs=None)
 def windmill_graph(n, k):
     """Generate a windmill graph.
     A windmill graph is a graph of `n` cliques each of size `k` that are all
@@ -494,7 +486,6 @@ def windmill_graph(n, k):
 
 
 @py_random_state(3)
-@nx._dispatch(graphs=None)
 def stochastic_block_model(
     sizes, p, nodelist=None, seed=None, directed=False, selfloops=False, sparse=True
 ):
@@ -600,7 +591,7 @@ def stochastic_block_model(
         if len(nodelist) != len(set(nodelist)):
             raise nx.NetworkXException("nodelist contains duplicate.")
     else:
-        nodelist = range(sum(sizes))
+        nodelist = range(0, sum(sizes))
 
     # Setup the graph conditionally to the directed switch.
     block_range = range(len(sizes))
@@ -611,10 +602,10 @@ def stochastic_block_model(
         g = nx.Graph()
         block_iter = itertools.combinations_with_replacement(block_range, 2)
     # Split nodelist in a partition (list of sets).
-    size_cumsum = [sum(sizes[0:x]) for x in range(len(sizes) + 1)]
+    size_cumsum = [sum(sizes[0:x]) for x in range(0, len(sizes) + 1)]
     g.graph["partition"] = [
         set(nodelist[size_cumsum[x] : size_cumsum[x + 1]])
-        for x in range(len(size_cumsum) - 1)
+        for x in range(0, len(size_cumsum) - 1)
     ]
     # Setup nodes and graph name
     for block_id, nodes in enumerate(g.graph["partition"]):
@@ -808,7 +799,6 @@ def _generate_communities(degree_seq, community_sizes, mu, max_iters, seed):
 
 
 @py_random_state(11)
-@nx._dispatch(graphs=None)
 def LFR_benchmark_graph(
     n,
     tau1,
@@ -1006,7 +996,7 @@ def LFR_benchmark_graph(
         raise nx.NetworkXError("max_degree must be in the interval (0, n]")
     if not ((min_degree is None) ^ (average_degree is None)):
         raise nx.NetworkXError(
-            "Must assign exactly one of min_degree and average_degree"
+            "Must assign exactly one of min_degree and" " average_degree"
         )
     if min_degree is None:
         min_degree = _generate_min_degree(

@@ -1,5 +1,7 @@
 """Time dependent algorithms."""
 
+from datetime import datetime, timedelta
+
 import networkx as nx
 from networkx.utils import not_implemented_for
 
@@ -9,7 +11,7 @@ __all__ = ["cd_index"]
 @not_implemented_for("undirected")
 @not_implemented_for("multigraph")
 @nx._dispatch(node_attrs={"time": None, "weight": 1})
-def cd_index(G, node, time_delta, *, time="time", weight=None):
+def cd_index(G, node, *, time_delta=timedelta(days=5 * 365), time="time", weight=None):
     r"""Compute the CD index for `node` within the graph `G`.
 
     Calculates the CD index for the given node of the graph,
@@ -24,15 +26,12 @@ def cd_index(G, node, time_delta, *, time="time", weight=None):
        `weight` attributes (if a weight is not given, it is considered 1).
     node : node
        The node for which the CD index is calculated.
-    time_delta : numeric or timedelta
-       Amount of time after the `time` attribute of the `node`. The value of
-       `time_delta` must support comparison with the `time` node attribute. For
-       example, if the `time` attribute of the nodes are `datetime.datetime`
-       objects, then `time_delta` should be a `datetime.timedelta` object.
+    time_delta : timedelta, integer or float (Optional, default is timedelta(days=5*365))
+       Amount of time after the `time` attribute of the `node`.
     time : string (Optional, default is "time")
         The name of the node attribute that will be used for the calculations.
     weight : string (Optional, default is None)
-        The name of the node attribute used as weight.
+        the name of the node attribute used as weight.
 
     Returns
     -------
@@ -51,7 +50,6 @@ def cd_index(G, node, time_delta, *, time="time", weight=None):
 
     Examples
     --------
-    >>> from datetime import datetime, timedelta
     >>> G = nx.DiGraph()
     >>> nodes = {
     ...     1: {"time": datetime(2015, 1, 1)},
@@ -63,19 +61,7 @@ def cd_index(G, node, time_delta, *, time="time", weight=None):
     >>> G.add_nodes_from([(n, nodes[n]) for n in nodes])
     >>> edges = [(1, 3), (1, 4), (2, 3), (3, 4), (3, 5)]
     >>> G.add_edges_from(edges)
-    >>> delta = timedelta(days=5 * 365)
-    >>> nx.cd_index(G, 3, time_delta=delta, time="time")
-    0.5
-    >>> nx.cd_index(G, 3, time_delta=delta, time="time", weight="weight")
-    0.12
-
-    Integers can also be used for the time values:
-    >>> node_times = {1: 2015, 2: 2012, 3: 2010, 4: 2008, 5: 2014}
-    >>> nx.set_node_attributes(G, node_times, "new_time")
-    >>> nx.cd_index(G, 3, time_delta=4, time="new_time")
-    0.5
-    >>> nx.cd_index(G, 3, time_delta=4, time="new_time", weight="weight")
-    0.12
+    >>> cd = nx.cd_index(G, 3, time="time", weight="weight")
 
     Notes
     -----
@@ -93,14 +79,6 @@ def cd_index(G, node, time_delta, *, time="time", weight=None):
     1 if `i` cites any of the focal patents successors else 0, `n_{t}` is the number
     of forward citations in `i` and `w_{it}` is a matrix of weight for patent `i`
     at time `t`.
-
-    The `datetime.timedelta` package can lead to off-by-one issues when converting
-    from years to days. In the example above `timedelta(days=5 * 365)` looks like
-    5 years, but it isn't because of leap year days. So it gives the same result
-    as `timedelta(days=4 * 365)`. But using `timedelta(days=5 * 365 + 1)` gives
-    a 5 year delta **for this choice of years** but may not if the 5 year gap has
-    more than 1 leap year. To avoid these issues, use integers to represent years,
-    or be very careful when you convert units of time.
 
     References
     ----------
@@ -121,7 +99,7 @@ def cd_index(G, node, time_delta, *, time="time", weight=None):
     except:
         raise nx.NetworkXError(
             "Addition and comparison are not supported between 'time_delta' "
-            "and 'time' types."
+            "and 'time' types, default time_delta = datetime.timedelta."
         )
 
     # -1 if any edge between node's predecessors and node's successors, else 1

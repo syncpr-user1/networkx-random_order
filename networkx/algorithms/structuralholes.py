@@ -56,7 +56,7 @@ def effective_size(G, nodes=None, weight=None):
     The *effective size* of a node's ego network is based on the concept
     of redundancy. A person's ego network has redundancy to the extent
     that her contacts are connected to each other as well. The
-    nonredundant part of a person's relationships is the effective
+    nonredundant part of a person's relationships it's the effective
     size of her ego network [1]_.  Formally, the effective size of a
     node $u$, denoted $e(u)$, is defined by
 
@@ -229,7 +229,7 @@ def local_constraint(G, u, v, weight=None):
     the node ``v`` in the graph ``G``.
 
     Formally, the *local constraint on u with respect to v*, denoted
-    $\ell(u, v)$, is defined by
+    $\ell(v)$, is defined by
 
     .. math::
 

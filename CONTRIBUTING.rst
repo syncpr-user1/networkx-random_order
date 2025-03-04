@@ -122,7 +122,7 @@ Development Workflow
 
          pre-commit run --all-files
 
-5. Submit your contribution:
+4. Submit your contribution:
 
    * Push your changes back to your fork on GitHub::
 
@@ -135,7 +135,7 @@ Development Workflow
      <http://groups.google.com/group/networkx-discuss>`_ to explain your changes or
      to ask for review.
 
-6. Review process:
+5. Review process:
 
    * Every Pull Request (PR) update triggers a set of `continuous integration
      <https://en.wikipedia.org/wiki/Continuous_integration>`_ services
@@ -165,10 +165,10 @@ Development Workflow
       issue number 1480, you could use the phrase "Fixes #1480" in the PR
       description or commit message.
 
-7. Document deprecations and API changes
-   
-   If your change introduces any API modifications including deprecations,
-   please make sure the PR has the ``type: API`` label.
+6. Document changes
+
+   If your change introduces any API modifications, please update
+   ``doc/release/release_dev.rst``.
 
    To set up a function for deprecation:
 
@@ -177,7 +177,7 @@ Development Workflow
          msg = "curly_hair is deprecated and will be removed in v3.0. Use sum() instead."
          warnings.warn(msg, DeprecationWarning)
 
-   - Add a warnings filter to ``networkx/conftest.py``::
+   - Add a warning to ``networkx/conftest.py``::
 
          warnings.filterwarnings(
              "ignore", category=DeprecationWarning, message=<start of message>
@@ -189,6 +189,14 @@ Development Workflow
      .. code-block:: rst
 
         * In ``utils/misc.py`` remove ``generate_unique_node`` and related tests.
+
+   - Add a note (and a link to the PR) to ``doc/release/release_dev.rst``:
+
+     .. code-block:: rst
+
+        [`#4281 <https://github.com/networkx/networkx/pull/4281>`_]
+        Deprecate ``read_yaml`` and ``write_yaml``.
+
 
    .. note::
 
@@ -395,7 +403,7 @@ Then create a baseline image to compare against later::
 
     $ pytest -k test_barbell --mpl-generate-path=networkx/drawing/tests/baseline
 
-.. note:: In order to keep the size of the repository from becoming too large, we
+.. note: In order to keep the size of the repository from becoming too large, we
    prefer to limit the size and number of baseline images we include.
 
 And test::
@@ -405,7 +413,27 @@ And test::
 Documentation
 -------------
 
-.. include:: ../README.rst
+Building the documentation locally requires that the additional dependencies
+specified in ``requirements/doc.txt`` be installed in your development
+environment.
+
+The documentation is built with ``sphinx``. To build the documentation locally,
+navigate to the ``doc/`` directory and::
+
+    make html
+
+This will generate both the reference documentation as well as the example
+gallery. If you want to build the documentation *without* building the
+gallery examples use::
+
+    make html-noplot
+
+The build products are stored in ``doc/build/`` and can be viewed directly.
+For example, to view the built html, open ``build/html/index.html``
+in your preferred web browser.
+
+.. note: ``sphinx`` supports many other output formats. Type ``make`` without
+   any arguments to see all the built-in options.
 
 Adding examples
 ~~~~~~~~~~~~~~~

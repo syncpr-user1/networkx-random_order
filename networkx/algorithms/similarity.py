@@ -1275,14 +1275,6 @@ def simrank_similarity(
         If neither ``source`` nor ``target`` is ``None``, this returns
         the similarity value for the given pair of nodes.
 
-    Raises
-    ------
-    ExceededMaxIterations
-        If the algorithm does not converge within ``max_iterations``.
-
-    NodeNotFound
-        If either ``source`` or ``target`` is not in `G`.
-
     Examples
     --------
     >>> G = nx.cycle_graph(2)
@@ -1319,21 +1311,8 @@ def simrank_similarity(
     import numpy as np
 
     nodelist = list(G)
-    if source is not None:
-        if source not in nodelist:
-            raise nx.NodeNotFound(f"Source node {source} not in G")
-        else:
-            s_indx = nodelist.index(source)
-    else:
-        s_indx = None
-
-    if target is not None:
-        if target not in nodelist:
-            raise nx.NodeNotFound(f"Target node {target} not in G")
-        else:
-            t_indx = nodelist.index(target)
-    else:
-        t_indx = None
+    s_indx = None if source is None else nodelist.index(source)
+    t_indx = None if target is None else nodelist.index(target)
 
     x = _simrank_similarity_numpy(
         G, s_indx, t_indx, importance_factor, max_iterations, tolerance
@@ -1384,7 +1363,7 @@ def _simrank_similarity_python(
 
     for its in range(max_iterations):
         oldsim = newsim
-        newsim = {u: {v: sim(u, v) if u != v else 1 for v in G} for u in G}
+        newsim = {u: {v: sim(u, v) if u is not v else 1 for v in G} for u in G}
         is_close = all(
             all(
                 abs(newsim[u][v] - old) <= tolerance * (1 + abs(old))
@@ -1532,7 +1511,7 @@ def panther_similarity(
     source : node
         Source node for which to find the top `k` similar other nodes
     k : int (default = 5)
-        The number of most similar nodes to return.
+        The number of most similar nodes to return
     path_length : int (default = 5)
         How long the randomly generated paths should be (``T`` in [1]_)
     c : float (default = 0.5)
@@ -1554,20 +1533,7 @@ def panther_similarity(
     similarity : dictionary
         Dictionary of nodes to similarity scores (as floats). Note:
         the self-similarity (i.e., ``v``) will not be included in
-        the returned dictionary. So, for ``k = 5``, a dictionary of
-        top 4 nodes and their similarity scores will be returned.
-
-    Raises
-    ------
-    NetworkXUnfeasible
-        If `source` is an isolated node.
-
-    NodeNotFound
-        If `source` is not in `G`.
-
-    Notes
-    -----
-        The isolated nodes in `G` are ignored.
+        the returned dictionary.
 
     Examples
     --------
@@ -1583,18 +1549,6 @@ def panther_similarity(
            Association for Computing Machinery. https://doi.org/10.1145/2783258.2783267.
     """
     import numpy as np
-
-    if source not in G:
-        raise nx.NodeNotFound(f"Source node {source} not in G")
-
-    isolates = set(nx.isolates(G))
-
-    if source in isolates:
-        raise nx.NetworkXUnfeasible(
-            f"Panther similarity is not defined for the isolated source node {source}."
-        )
-
-    G = G.subgraph([node for node in G.nodes if node not in isolates]).copy()
 
     num_nodes = G.number_of_nodes()
     if num_nodes < k:
@@ -1735,22 +1689,22 @@ def generate_random_paths(
         for _ in range(path_length):
             # Randomly sample a neighbor (v_j) according
             # to transition probabilities from ``node`` (v) to its neighbors
-            nbr_index = np.random.choice(
+            neighbor_index = np.random.choice(
                 num_nodes, p=transition_probabilities[starting_index]
             )
 
             # Set current vertex (v = v_j)
-            starting_index = nbr_index
+            starting_index = neighbor_index
 
             # Add v into p_r
-            nbr_node = node_map[nbr_index]
-            path.append(nbr_node)
+            neighbor_node = node_map[neighbor_index]
+            path.append(neighbor_node)
 
             # Add p_r into P_v
             if index_map is not None:
-                if nbr_node in index_map:
-                    index_map[nbr_node].add(path_index)
+                if neighbor_node in index_map:
+                    index_map[neighbor_node].add(path_index)
                 else:
-                    index_map[nbr_node] = {path_index}
+                    index_map[neighbor_node] = {path_index}
 
         yield path
