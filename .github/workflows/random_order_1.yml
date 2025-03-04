@@ -1,4 +1,4 @@
-name: random_order
+name: random_order_1
 
 on: [push, workflow_dispatch]
 
