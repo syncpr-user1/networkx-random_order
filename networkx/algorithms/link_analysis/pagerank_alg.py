@@ -6,7 +6,7 @@ import networkx as nx
 __all__ = ["pagerank", "google_matrix"]
 
 
-@nx._dispatch(edge_attrs="weight")
+@nx._dispatchable(edge_attrs="weight")
 def pagerank(
     G,
     alpha=0.85,
@@ -172,7 +172,7 @@ def _pagerank_python(
     raise nx.PowerIterationFailedConvergence(max_iter)
 
 
-@nx._dispatch(edge_attrs="weight")
+@nx._dispatchable(edge_attrs="weight")
 def google_matrix(
     G, alpha=0.85, personalization=None, nodelist=None, weight="weight", dangling=None
 ):
@@ -457,7 +457,15 @@ def _pagerank_scipy(
         return {}
 
     nodelist = list(G)
-    A = nx.to_scipy_sparse_array(G, nodelist=nodelist, weight=weight, dtype=float)
+
+    # Check if the cache exists
+    if "networkx-sparse" in G._cache_it_all:
+        # Get the cached sparse array
+        A = G._cache_it_all["networkx-sparse"]
+    else:
+        A = nx.to_scipy_sparse_array(G, nodelist=nodelist, weight=weight, dtype=float)
+        G._cache_it_all["networkx-sparse"] = A
+
     S = A.sum(axis=1)
     S[S != 0] = 1.0 / S[S != 0]
     # TODO: csr_array

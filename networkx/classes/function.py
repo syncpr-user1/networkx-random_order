@@ -49,7 +49,10 @@ __all__ = [
 
 
 def nodes(G):
-    """Returns an iterator over the graph nodes."""
+    """Returns a NodeView over the graph nodes.
+
+    This function wraps the :func:`G.nodes <networkx.Graph.nodes>` property.
+    """
     return G.nodes()
 
 
@@ -59,6 +62,8 @@ def edges(G, nbunch=None):
     Return all edges if nbunch is unspecified or nbunch=None.
 
     For digraphs, edges=out_edges
+
+    This function wraps the :func:`G.edges <networkx.Graph.edges>` property.
     """
     return G.edges(nbunch)
 
@@ -66,22 +71,33 @@ def edges(G, nbunch=None):
 def degree(G, nbunch=None, weight=None):
     """Returns a degree view of single node or of nbunch of nodes.
     If nbunch is omitted, then return degrees of *all* nodes.
+
+    This function wraps the :func:`G.degree <networkx.Graph.degree>` property.
     """
     return G.degree(nbunch, weight)
 
 
 def neighbors(G, n):
-    """Returns a list of nodes connected to node n."""
+    """Returns an iterator over all neighbors of node n.
+
+    This function wraps the :func:`G.neighbors <networkx.Graph.neighbors>` function.
+    """
     return G.neighbors(n)
 
 
 def number_of_nodes(G):
-    """Returns the number of nodes in the graph."""
+    """Returns the number of nodes in the graph.
+
+    This function wraps the :func:`G.number_of_nodes <networkx.Graph.number_of_nodes>` function.
+    """
     return G.number_of_nodes()
 
 
 def number_of_edges(G):
-    """Returns the number of edges in the graph."""
+    """Returns the number of edges in the graph.
+
+    This function wraps the :func:`G.number_of_edges <networkx.Graph.number_of_edges>` function.
+    """
     return G.number_of_edges()
 
 
@@ -388,7 +404,7 @@ def induced_subgraph(G, nbunch):
     [0, 1, 3]
     """
     induced_nodes = nx.filters.show_nodes(G.nbunch_iter(nbunch))
-    return nx.subgraph_view(G, induced_nodes)
+    return nx.subgraph_view(G, filter_node=induced_nodes)
 
 
 def edge_subgraph(G, edges):
@@ -447,7 +463,7 @@ def edge_subgraph(G, edges):
             induced_edges = nxf.show_diedges(edges)
         else:
             induced_edges = nxf.show_edges(edges)
-    return nx.subgraph_view(G, induced_nodes, induced_edges)
+    return nx.subgraph_view(G, filter_node=induced_nodes, filter_edge=induced_edges)
 
 
 def restricted_view(G, nodes, edges):
@@ -503,7 +519,7 @@ def restricted_view(G, nodes, edges):
             hide_edges = nxf.hide_diedges(edges)
         else:
             hide_edges = nxf.hide_edges(edges)
-    return nx.subgraph_view(G, hide_nodes, hide_edges)
+    return nx.subgraph_view(G, filter_node=hide_nodes, filter_edge=hide_edges)
 
 
 def to_directed(graph):
