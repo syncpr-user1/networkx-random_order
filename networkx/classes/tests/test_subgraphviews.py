@@ -19,6 +19,7 @@ class TestSubGraphView:
         hide_nodes = [4, 5, 111]
         nodes_gone = nx.filters.hide_nodes(hide_nodes)
         gview = self.gview
+        print(gview)
         G = gview(self.G, filter_node=nodes_gone)
         assert self.G.nodes - G.nodes == {4, 5}
         assert self.G.edges - G.edges == self.hide_edges_w_hide_nodes
@@ -105,7 +106,7 @@ class TestSubDiGraphView(TestSubGraphView):
         edges_gone = self.hide_edges_filter(self.hide_edges)
         hide_nodes = [4, 5, 111]
         nodes_gone = nx.filters.hide_nodes(hide_nodes)
-        G = self.gview(self.G, filter_node=nodes_gone, filter_edge=edges_gone)
+        G = self.gview(self.G, nodes_gone, edges_gone)
 
         assert self.G.in_edges - G.in_edges == self.excluded
         assert self.G.out_edges - G.out_edges == self.excluded
@@ -114,7 +115,7 @@ class TestSubDiGraphView(TestSubGraphView):
         edges_gone = self.hide_edges_filter(self.hide_edges)
         hide_nodes = [4, 5, 111]
         nodes_gone = nx.filters.hide_nodes(hide_nodes)
-        G = self.gview(self.G, filter_node=nodes_gone, filter_edge=edges_gone)
+        G = self.gview(self.G, nodes_gone, edges_gone)
 
         assert list(G.pred[2]) == [1]
         assert list(G.pred[6]) == []
@@ -123,7 +124,7 @@ class TestSubDiGraphView(TestSubGraphView):
         edges_gone = self.hide_edges_filter(self.hide_edges)
         hide_nodes = [4, 5, 111]
         nodes_gone = nx.filters.hide_nodes(hide_nodes)
-        G = self.gview(self.G, filter_node=nodes_gone, filter_edge=edges_gone)
+        G = self.gview(self.G, nodes_gone, edges_gone)
 
         assert G.degree(2) == 1
         assert G.out_degree(2) == 0
@@ -200,7 +201,7 @@ class TestMultiDiGraphView(TestMultiGraphView, TestSubDiGraphView):
         edges_gone = self.hide_edges_filter(self.hide_edges)
         hide_nodes = [4, 5, 111]
         nodes_gone = nx.filters.hide_nodes(hide_nodes)
-        G = self.gview(self.G, filter_node=nodes_gone, filter_edge=edges_gone)
+        G = self.gview(self.G, nodes_gone, edges_gone)
 
         assert G.degree(2) == 3
         assert G.out_degree(2) == 2

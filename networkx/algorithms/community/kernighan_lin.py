@@ -49,14 +49,13 @@ def kernighan_lin_bisection(G, partition=None, max_iter=10, weight="weight", see
 
     This algorithm partitions a network into two sets by iteratively
     swapping pairs of nodes to reduce the edge cut between the two sets.  The
-    pairs are chosen according to a modified form of Kernighan-Lin [1]_, which
+    pairs are chosen according to a modified form of Kernighan-Lin, which
     moves node individually, alternating between sides to keep the bisection
     balanced.
 
     Parameters
     ----------
-    G : NetworkX graph
-        Graph must be undirected.
+    G : graph
 
     partition : tuple
         Pair of iterables containing an initial partition. If not

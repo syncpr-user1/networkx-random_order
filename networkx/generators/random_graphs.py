@@ -37,7 +37,6 @@ __all__ = [
 
 
 @py_random_state(2)
-@nx._dispatch(graphs=None)
 def fast_gnp_random_graph(n, p, seed=None, directed=False):
     """Returns a $G_{n,p}$ random graph, also known as an Erdős-Rényi graph or
     a binomial graph.
@@ -109,7 +108,6 @@ def fast_gnp_random_graph(n, p, seed=None, directed=False):
 
 
 @py_random_state(2)
-@nx._dispatch(graphs=None)
 def gnp_random_graph(n, p, seed=None, directed=False):
     """Returns a $G_{n,p}$ random graph, also known as an Erdős-Rényi graph
     or a binomial graph.
@@ -174,7 +172,6 @@ erdos_renyi_graph = gnp_random_graph
 
 
 @py_random_state(2)
-@nx._dispatch(graphs=None)
 def dense_gnm_random_graph(n, m, seed=None):
     """Returns a $G_{n,m}$ random graph.
 
@@ -236,7 +233,6 @@ def dense_gnm_random_graph(n, m, seed=None):
 
 
 @py_random_state(2)
-@nx._dispatch(graphs=None)
 def gnm_random_graph(n, m, seed=None, directed=False):
     """Returns a $G_{n,m}$ random graph.
 
@@ -292,7 +288,6 @@ def gnm_random_graph(n, m, seed=None, directed=False):
 
 
 @py_random_state(3)
-@nx._dispatch(graphs=None)
 def newman_watts_strogatz_graph(n, k, p, seed=None):
     """Returns a Newman–Watts–Strogatz small-world graph.
 
@@ -363,7 +358,6 @@ def newman_watts_strogatz_graph(n, k, p, seed=None):
 
 
 @py_random_state(3)
-@nx._dispatch(graphs=None)
 def watts_strogatz_graph(n, k, p, seed=None):
     """Returns a Watts–Strogatz small-world graph.
 
@@ -438,7 +432,6 @@ def watts_strogatz_graph(n, k, p, seed=None):
 
 
 @py_random_state(4)
-@nx._dispatch(graphs=None)
 def connected_watts_strogatz_graph(n, k, p, tries=100, seed=None):
     """Returns a connected Watts–Strogatz small-world graph.
 
@@ -491,7 +484,6 @@ def connected_watts_strogatz_graph(n, k, p, tries=100, seed=None):
 
 
 @py_random_state(2)
-@nx._dispatch(graphs=None)
 def random_regular_graph(d, n, seed=None):
     r"""Returns a random $d$-regular graph on $n$ nodes.
 
@@ -622,7 +614,6 @@ def _random_subset(seq, m, rng):
 
 
 @py_random_state(2)
-@nx._dispatch(graphs=None)
 def barabasi_albert_graph(n, m, seed=None, initial_graph=None):
     """Returns a random graph using Barabási–Albert preferential attachment
 
@@ -695,7 +686,6 @@ def barabasi_albert_graph(n, m, seed=None, initial_graph=None):
 
 
 @py_random_state(4)
-@nx._dispatch(graphs=None)
 def dual_barabasi_albert_graph(n, m1, m2, p, seed=None, initial_graph=None):
     """Returns a random graph using dual Barabási–Albert preferential attachment
 
@@ -795,7 +785,6 @@ def dual_barabasi_albert_graph(n, m1, m2, p, seed=None, initial_graph=None):
 
 
 @py_random_state(4)
-@nx._dispatch(graphs=None)
 def extended_barabasi_albert_graph(n, m, p, q, seed=None):
     """Returns an extended Barabási–Albert model graph.
 
@@ -911,16 +900,16 @@ def extended_barabasi_albert_graph(n, m, p, q, seed=None):
                 node = seed.choice(eligible_nodes)
 
                 # The available nodes do have a neighbor at least.
-                nbr_nodes = list(G[node])
+                neighbor_nodes = list(G[node])
 
                 # Choosing the other end that will get detached
-                src_node = seed.choice(nbr_nodes)
+                src_node = seed.choice(neighbor_nodes)
 
                 # Picking a target node that is not 'node' or
                 # neighbor with 'node', with preferential attachment
-                nbr_nodes.append(node)
+                neighbor_nodes.append(node)
                 dest_node = seed.choice(
-                    [nd for nd in attachment_preference if nd not in nbr_nodes]
+                    [nd for nd in attachment_preference if nd not in neighbor_nodes]
                 )
                 # Rewire
                 G.remove_edge(node, src_node)
@@ -956,7 +945,6 @@ def extended_barabasi_albert_graph(n, m, p, q, seed=None):
 
 
 @py_random_state(3)
-@nx._dispatch(graphs=None)
 def powerlaw_cluster_graph(n, m, p, seed=None):
     """Holme and Kim algorithm for growing graphs with powerlaw
     degree distribution and approximate average clustering.
@@ -1046,7 +1034,6 @@ def powerlaw_cluster_graph(n, m, p, seed=None):
 
 
 @py_random_state(3)
-@nx._dispatch(graphs=None)
 def random_lobster(n, p1, p2, seed=None):
     """Returns a random lobster graph.
 
@@ -1097,7 +1084,6 @@ def random_lobster(n, p1, p2, seed=None):
 
 
 @py_random_state(1)
-@nx._dispatch(graphs=None)
 def random_shell_graph(constructor, seed=None):
     """Returns a random shell graph for the constructor given.
 
@@ -1155,7 +1141,6 @@ def random_shell_graph(constructor, seed=None):
 
 
 @py_random_state(2)
-@nx._dispatch(graphs=None)
 def random_powerlaw_tree(n, gamma=3, seed=None, tries=100):
     """Returns a tree with a power law degree distribution.
 
@@ -1192,7 +1177,6 @@ def random_powerlaw_tree(n, gamma=3, seed=None, tries=100):
 
 
 @py_random_state(2)
-@nx._dispatch(graphs=None)
 def random_powerlaw_tree_sequence(n, gamma=3, seed=None, tries=100):
     """Returns a degree sequence for a tree with a power law distribution.
 
@@ -1249,7 +1233,6 @@ def random_powerlaw_tree_sequence(n, gamma=3, seed=None, tries=100):
 
 
 @py_random_state(3)
-@nx._dispatch(graphs=None)
 def random_kernel_graph(n, kernel_integral, kernel_root=None, seed=None):
     r"""Returns an random graph based on the specified kernel.
 

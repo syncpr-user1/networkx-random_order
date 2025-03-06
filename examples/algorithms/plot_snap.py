@@ -54,9 +54,8 @@ base_options = {"with_labels": True, "edgecolors": "black", "node_size": 500}
 
 ax1 = plt.subplot(1, 2, 1)
 plt.title(
-    "Original ({} nodes, {} edges)".format(
-        original_graph.number_of_nodes(), original_graph.number_of_edges()
-    )
+    "Original (%s nodes, %s edges)"
+    % (original_graph.number_of_nodes(), original_graph.number_of_edges())
 )
 pos = nx.spring_layout(original_graph, seed=7482934)
 node_colors = [d["color"] for _, d in original_graph.nodes(data=True)]
@@ -80,9 +79,8 @@ summary_graph = nx.snap_aggregation(
 plt.subplot(1, 2, 2)
 
 plt.title(
-    "SNAP Aggregation ({} nodes, {} edges)".format(
-        summary_graph.number_of_nodes(), summary_graph.number_of_edges()
-    )
+    "SNAP Aggregation (%s nodes, %s edges)"
+    % (summary_graph.number_of_nodes(), summary_graph.number_of_edges())
 )
 summary_pos = nx.spring_layout(summary_graph, seed=8375428)
 node_colors = []

@@ -81,7 +81,6 @@ def adjacency_data(G, attrs=_attrs):
     return data
 
 
-@nx._dispatch(graphs=None)
 def adjacency_graph(data, directed=False, multigraph=True, attrs=_attrs):
     """Returns graph from adjacency data format.
 
@@ -148,9 +147,9 @@ def adjacency_graph(data, directed=False, multigraph=True, attrs=_attrs):
             target = target_data.pop(id_)
             if not multigraph:
                 graph.add_edge(source, target)
-                graph[source][target].update(target_data)
+                graph[source][target].update(tdata)
             else:
                 ky = target_data.pop(key, None)
                 graph.add_edge(source, target, key=ky)
-                graph[source][target][ky].update(target_data)
+                graph[source][target][ky].update(tdata)
     return graph

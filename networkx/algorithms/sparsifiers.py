@@ -136,11 +136,11 @@ def spanner(G, stretch, weight=None, seed=None):
                 # remove edges to centers with edge weight less than
                 # closest_center_weight
                 for neighbor in residual_graph.adj[v]:
-                    nbr_cluster = clustering[neighbor]
-                    nbr_weight = lightest_edge_weight[nbr_cluster]
+                    neighbor_cluster = clustering[neighbor]
+                    neighbor_weight = lightest_edge_weight[neighbor_cluster]
                     if (
-                        nbr_cluster == closest_center
-                        or nbr_weight < closest_center_weight
+                        neighbor_cluster == closest_center
+                        or neighbor_weight < closest_center_weight
                     ):
                         edges_to_remove.add((v, neighbor))
 
@@ -257,14 +257,14 @@ def _lightest_edge_dicts(residual_graph, clustering, node):
     lightest_edge_neighbor = {}
     lightest_edge_weight = {}
     for neighbor in residual_graph.adj[node]:
-        nbr_center = clustering[neighbor]
+        neighbor_center = clustering[neighbor]
         weight = residual_graph[node][neighbor]["weight"]
         if (
-            nbr_center not in lightest_edge_weight
-            or weight < lightest_edge_weight[nbr_center]
+            neighbor_center not in lightest_edge_weight
+            or weight < lightest_edge_weight[neighbor_center]
         ):
-            lightest_edge_neighbor[nbr_center] = neighbor
-            lightest_edge_weight[nbr_center] = weight
+            lightest_edge_neighbor[neighbor_center] = neighbor
+            lightest_edge_weight[neighbor_center] = weight
     return lightest_edge_neighbor, lightest_edge_weight
 
 

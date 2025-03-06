@@ -123,7 +123,7 @@ def _init_product_graph(G, H):
     return GH
 
 
-@nx._dispatch(graphs=_G_H, preserve_node_attrs=True)
+@nx._dispatch(graphs=_G_H)
 def tensor_product(G, H):
     r"""Returns the tensor product of G and H.
 
@@ -179,7 +179,7 @@ def tensor_product(G, H):
     return GH
 
 
-@nx._dispatch(graphs=_G_H, preserve_node_attrs=True)
+@nx._dispatch(graphs=_G_H)
 def cartesian_product(G, H):
     r"""Returns the Cartesian product of G and H.
 
@@ -231,7 +231,7 @@ def cartesian_product(G, H):
     return GH
 
 
-@nx._dispatch(graphs=_G_H, preserve_node_attrs=True)
+@nx._dispatch(graphs=_G_H)
 def lexicographic_product(G, H):
     r"""Returns the lexicographic product of G and H.
 
@@ -284,7 +284,7 @@ def lexicographic_product(G, H):
     return GH
 
 
-@nx._dispatch(graphs=_G_H, preserve_node_attrs=True)
+@nx._dispatch(graphs=_G_H)
 def strong_product(G, H):
     r"""Returns the strong product of G and H.
 
@@ -383,7 +383,7 @@ def power(G, k):
     >>> list(nx.power(G, 3).edges)
     [(0, 1), (0, 2), (0, 3), (1, 2), (1, 3), (2, 3)]
 
-    The `k` th power of a cycle graph on *n* nodes is the complete graph
+    The `k`th power of a cycle graph on *n* nodes is the complete graph
     on *n* nodes, if `k` is at least ``n // 2``:
 
     >>> G = nx.cycle_graph(5)

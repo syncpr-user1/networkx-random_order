@@ -34,7 +34,6 @@ Breadth First Search
    bfs_predecessors
    bfs_successors
    descendants_at_distance
-   generic_bfs_edges
 
 Beam search
 -----------

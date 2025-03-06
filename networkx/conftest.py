@@ -29,13 +29,13 @@ def pytest_addoption(parser):
         "--backend",
         action="store",
         default=None,
-        help="Run tests with a backend by auto-converting nx graphs to backend graphs",
+        help="Run tests with a plugin by auto-converting nx graphs to backend graphs",
     )
     parser.addoption(
         "--fallback-to-nx",
         action="store_true",
         default=False,
-        help="Run nx function if a backend doesn't implement a dispatchable function"
+        help="Run nx function if a plugin doesn't implement a dispatchable function"
         " (use with --backend)",
     )
 
@@ -51,19 +51,14 @@ def pytest_configure(config):
         if not fallback_to_nx:
             fallback_to_nx = os.environ.get("NETWORKX_FALLBACK_TO_NX")
         networkx.utils.backends._dispatch._fallback_to_nx = bool(fallback_to_nx)
-    # nx-loopback backend is only available when testing
-    backends = entry_points(name="nx-loopback", group="networkx.backends")
-    if backends:
-        networkx.utils.backends.backends["nx-loopback"] = next(iter(backends))
-    else:
-        warnings.warn(
-            "\n\n             WARNING: Mixed NetworkX configuration! \n\n"
-            "        This environment has mixed configuration for networkx.\n"
-            "        The test object nx-loopback is not configured correctly.\n"
-            "        You should not be seeing this message.\n"
-            "        Try `pip install -e .`, or change your PYTHONPATH\n"
-            "        Make sure python finds the networkx repo you are testing\n\n"
+    # nx-loopback plugin is only available when testing
+    if sys.version_info < (3, 10):
+        plugins = (
+            ep for ep in entry_points()["networkx.plugins"] if ep.name == "nx-loopback"
         )
+    else:
+        plugins = entry_points(name="nx-loopback", group="networkx.plugins")
+    networkx.utils.backends.plugins["nx-loopback"] = next(iter(plugins))
 
 
 def pytest_collection_modifyitems(config, items):
@@ -73,7 +68,7 @@ def pytest_collection_modifyitems(config, items):
     if automatic_backends := networkx.utils.backends._dispatch._automatic_backends:
         # Allow pluggable backends to add markers to tests (such as skip or xfail)
         # when running in auto-conversion test mode
-        backend = networkx.utils.backends.backends[automatic_backends[0]].load()
+        backend = networkx.utils.backends.plugins[automatic_backends[0]].load()
         if hasattr(backend, "on_start_tests"):
             getattr(backend, "on_start_tests")(items)
 
@@ -91,19 +86,38 @@ def pytest_collection_modifyitems(config, items):
 def set_warnings():
     warnings.filterwarnings(
         "ignore",
-        category=FutureWarning,
-        message="\n\nsingle_target_shortest_path_length",
+        category=DeprecationWarning,
+        message="literal_stringizer is deprecated",
     )
     warnings.filterwarnings(
         "ignore",
-        category=FutureWarning,
-        message="\n\nshortest_path",
+        category=DeprecationWarning,
+        message="literal_destringizer is deprecated",
+    )
+    # create_using for scale_free_graph
+    warnings.filterwarnings(
+        "ignore", category=DeprecationWarning, message="The create_using argument"
+    )
+    warnings.filterwarnings(
+        "ignore", category=DeprecationWarning, message="nx.nx_pydot"
+    )
+    warnings.filterwarnings(
+        "ignore",
+        category=DeprecationWarning,
+        message="\n\nThe `attrs` keyword argument of node_link",
+    )
+    warnings.filterwarnings(
+        "ignore",
+        category=DeprecationWarning,
+        message="single_target_shortest_path_length will",
+    )
+    warnings.filterwarnings(
+        "ignore",
+        category=DeprecationWarning,
+        message="shortest_path for all_pairs",
     )
     warnings.filterwarnings(
         "ignore", category=DeprecationWarning, message="\nforest_str is deprecated"
-    )
-    warnings.filterwarnings(
-        "ignore", category=DeprecationWarning, message="\n\nrandom_tree"
     )
     warnings.filterwarnings(
         "ignore", category=DeprecationWarning, message="Edmonds has been deprecated"
@@ -112,41 +126,6 @@ def set_warnings():
         "ignore",
         category=DeprecationWarning,
         message="MultiDiGraph_EdgeKey has been deprecated",
-    )
-    warnings.filterwarnings(
-        "ignore", category=DeprecationWarning, message="\n\nThe `normalized`"
-    )
-    warnings.filterwarnings(
-        "ignore",
-        category=DeprecationWarning,
-        message="The function `join` is deprecated",
-    )
-    warnings.filterwarnings(
-        "ignore",
-        category=DeprecationWarning,
-        message="\n\nstrongly_connected_components_recursive",
-    )
-    warnings.filterwarnings(
-        "ignore", category=DeprecationWarning, message="\n\nall_triplets"
-    )
-    warnings.filterwarnings(
-        "ignore", category=DeprecationWarning, message="\n\nrandom_triad"
-    )
-    warnings.filterwarnings(
-        "ignore", category=DeprecationWarning, message="minimal_d_separator"
-    )
-    warnings.filterwarnings(
-        "ignore", category=DeprecationWarning, message="d_separated"
-    )
-    warnings.filterwarnings("ignore", category=DeprecationWarning, message="\n\nk_core")
-    warnings.filterwarnings(
-        "ignore", category=DeprecationWarning, message="\n\nk_shell"
-    )
-    warnings.filterwarnings(
-        "ignore", category=DeprecationWarning, message="\n\nk_crust"
-    )
-    warnings.filterwarnings(
-        "ignore", category=DeprecationWarning, message="\n\nk_corona"
     )
 
 
@@ -224,7 +203,6 @@ needs_numpy = [
     "algorithms/node_classification.py",
     "algorithms/non_randomness.py",
     "algorithms/shortest_paths/dense.py",
-    "generators/expanders.py",
     "linalg/bethehessianmatrix.py",
     "linalg/laplacianmatrix.py",
     "utils/misc.py",
@@ -251,7 +229,6 @@ needs_scipy = [
     "convert_matrix.py",
     "drawing/layout.py",
     "generators/spectral_graph_forge.py",
-    "generators/expanders.py",
     "linalg/algebraicconnectivity.py",
     "linalg/attrmatrix.py",
     "linalg/bethehessianmatrix.py",

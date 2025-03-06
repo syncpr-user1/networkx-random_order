@@ -410,7 +410,7 @@ def max_weight_matching(G, maxcardinality=False, weight="weight"):
         # and w is a vertex in b.childs[wrap(i+1)].
 
         # If b is a top-level S-blossom,
-        # b.mybestedges is a list of least-slack edges to neighboring
+        # b.mybestedges is a list of least-slack edges to neighbouring
         # S-blossoms, or None if no such list has been computed yet.
         # This is used for efficient computation of delta3.
 
@@ -671,7 +671,7 @@ def max_weight_matching(G, maxcardinality=False, weight="weight"):
 
     # Expand the given top-level blossom.
     def expandBlossom(b, endstage):
-        # This is an obnoxiously complicated recursive function for the sake of
+        # This is an obnoxiously complicated recusive function for the sake of
         # a stack-transformation.  So, we hack around the complexity by using
         # a trampoline pattern.  By yielding the arguments to each recursive
         # call, we keep the actual callstack flat.
@@ -738,12 +738,12 @@ def max_weight_matching(G, maxcardinality=False, weight="weight"):
                 j += jstep
                 while b.childs[j] != entrychild:
                     # Examine the vertices of the sub-blossom to see whether
-                    # it is reachable from a neighboring S-vertex outside the
+                    # it is reachable from a neighbouring S-vertex outside the
                     # expanding blossom.
                     bv = b.childs[j]
                     if label.get(bv) == 1:
                         # This sub-blossom just got label S through one of its
-                        # neighbors; leave it be.
+                        # neighbours; leave it be.
                         j += jstep
                         continue
                     if isinstance(bv, Blossom):
@@ -787,7 +787,7 @@ def max_weight_matching(G, maxcardinality=False, weight="weight"):
     # between vertex v and the base vertex. Keep blossom bookkeeping
     # consistent.
     def augmentBlossom(b, v):
-        # This is an obnoxiously complicated recursive function for the sake of
+        # This is an obnoxiously complicated recusive function for the sake of
         # a stack-transformation.  So, we hack around the complexity by using
         # a trampoline pattern.  By yielding the arguments to each recursive
         # call, we keep the actual callstack flat.
@@ -972,11 +972,11 @@ def max_weight_matching(G, maxcardinality=False, weight="weight"):
                 v = queue.pop()
                 assert label[inblossom[v]] == 1
 
-                # Scan its neighbors:
+                # Scan its neighbours:
                 for w in G.neighbors(v):
                     if w == v:
                         continue  # ignore self-loops
-                    # w is a neighbor to v
+                    # w is a neighbour to v
                     bv = inblossom[v]
                     bw = inblossom[w]
                     if bv == bw:

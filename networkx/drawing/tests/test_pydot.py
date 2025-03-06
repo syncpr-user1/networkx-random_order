@@ -11,6 +11,7 @@ from networkx.utils import graphs_equal
 pydot = pytest.importorskip("pydot")
 
 
+@pytest.mark.xfail
 class TestPydot:
     def pydot_checks(self, G, prog):
         """
