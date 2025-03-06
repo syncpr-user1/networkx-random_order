@@ -132,7 +132,7 @@ def node_link_data(
     return data
 
 
-@nx._dispatchable(graphs=None)
+@nx._dispatch(graphs=None)
 def node_link_graph(
     data,
     directed=False,

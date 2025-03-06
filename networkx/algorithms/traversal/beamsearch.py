@@ -4,7 +4,7 @@ import networkx as nx
 __all__ = ["bfs_beam_edges"]
 
 
-@nx._dispatchable
+@nx._dispatch
 def bfs_beam_edges(G, source, value, width=None):
     """Iterates over edges in a beam search.
 

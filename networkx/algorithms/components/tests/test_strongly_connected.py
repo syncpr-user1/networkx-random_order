@@ -183,7 +183,8 @@ class TestStronglyConnected:
         with pytest.raises(NetworkXNotImplemented):
             next(nx.kosaraju_strongly_connected_components(G))
         with pytest.raises(NetworkXNotImplemented):
-            next(nx.strongly_connected_components_recursive(G))
+            with pytest.deprecated_call():
+                next(nx.strongly_connected_components_recursive(G))
         pytest.raises(NetworkXNotImplemented, nx.is_strongly_connected, G)
         pytest.raises(NetworkXNotImplemented, nx.condensation, G)
 
