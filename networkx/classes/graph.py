@@ -305,6 +305,7 @@ class Graph:
 
     _adj = _CachedPropertyResetterAdj()
     _node = _CachedPropertyResetterNode()
+    _cache_it_all = {}
 
     node_dict_factory = dict
     node_attr_dict_factory = dict
@@ -551,6 +552,8 @@ class Graph:
         NetworkX Graphs, though one should be careful that the hash
         doesn't change on mutables.
         """
+        if len(self._cache_it_all) > 0:
+            self._cache_it_all = {}
         if node_for_adding not in self._node:
             if node_for_adding is None:
                 raise ValueError("None cannot be a node")
@@ -621,6 +624,8 @@ class Graph:
         >>> # correct way
         >>> G.add_nodes_from(list(n + 1 for n in G.nodes))
         """
+        if len(self._cache_it_all) > 0:
+            self._cache_it_all = {}
         for n in nodes_for_adding:
             try:
                 newnode = n not in self._node
@@ -667,6 +672,8 @@ class Graph:
         []
 
         """
+        if len(self._cache_it_all) > 0:
+            self._cache_it_all = {}
         adj = self._adj
         try:
             nbrs = list(adj[n])  # list handles self-loops (allows mutation)
@@ -719,6 +726,8 @@ class Graph:
         >>> # this command will work, since the dictionary underlying graph is not modified
         >>> G.remove_nodes_from(list(n for n in G.nodes if n < 2))
         """
+        if len(self._cache_it_all) > 0:
+            self._cache_it_all = {}
         adj = self._adj
         for n in nodes:
             try:
@@ -1547,8 +1556,8 @@ class Graph:
         >>> list(G.edges)
         []
         """
-        for neighbours_dict in self._adj.values():
-            neighbours_dict.clear()
+        for nbr_dict in self._adj.values():
+            nbr_dict.clear()
 
     def is_multigraph(self):
         """Returns True if graph is a multigraph, False otherwise."""
@@ -1821,8 +1830,10 @@ class Graph:
         # if already a subgraph, don't make a chain
         subgraph = nx.subgraph_view
         if hasattr(self, "_NODE_OK"):
-            return subgraph(self._graph, induced_nodes, self._EDGE_OK)
-        return subgraph(self, induced_nodes)
+            return subgraph(
+                self._graph, filter_node=induced_nodes, filter_edge=self._EDGE_OK
+            )
+        return subgraph(self, filter_node=induced_nodes)
 
     def edge_subgraph(self, edges):
         """Returns the subgraph induced by the specified edges.
