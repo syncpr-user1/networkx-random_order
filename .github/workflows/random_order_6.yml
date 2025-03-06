@@ -1,0 +1,64 @@
+name: random_order_6
+
+on: [push, workflow_dispatch]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+#   cancel-in-progress: true
+
+jobs:
+  default:
+    runs-on: ${{ matrix.os }}-latest
+    strategy:
+      matrix:
+        os: [ubuntu] #[ubuntu, macos, windows]
+        python-version: ["3.12"] #["3.10", "3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install uv
+        run: |
+          python -m pip install --upgrade pip
+          pip install uv
+
+      - name: Install packages
+        run: |
+          uv pip install -r requirements/default.txt -r requirements/test.txt
+          uv pip install .
+          uv pip list
+
+      - name: Install pytest-ranking related
+        run: pip install pytest-ranking pytest-json-report
+      
+      - name: Test for warnings at import time
+        run: python -Werror -c "import networkx"
+      
+      - name: Restore pytest-ranking cache
+        id: restore-pytest-ranking-cache
+        if: always()
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ github.workspace }}/.pytest_cache/v/pytest_ranking_data
+          key: pytest-ranking-cache-${{ github.workflow }}-${{ runner.os }}-${{ matrix.python }}
+
+      - name: Test NetworkX
+        run: |
+          pytest --doctest-modules -v --durations=0 --json-report --json-report-file=./test-report.json --pyargs networkx --rank --rank-weight=0-0-0 --rank-level=method --rank-seed=${{ github.run_id }}
+
+      - name: Save pytest-ranking cache
+        id: save-pytest-ranking-cache
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: ${{ github.workspace }}/.pytest_cache/v/pytest_ranking_data
+          key: pytest-ranking-cache-${{ github.workflow }}-${{ runner.os }}-${{ matrix.python }}-${{ github.run_id }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+            name: pytest-ranking upload test report json
+            path: |
+              ./test-report.json
